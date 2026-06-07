@@ -21,7 +21,7 @@ Saat pertama kali dijalankan, Ultralytics akan mengunduh model `yolov8n.pt` jika
 
 ## Menjalankan Kamera
 
-Deteksi semua objek COCO selain `person`:
+Deteksi objek genggam (*handheld*) default (seperti botol, HP, buku, remote, gunting, dll) tanpa `person`:
 
 ```powershell
 python kamera.py

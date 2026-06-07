@@ -11,6 +11,28 @@ from ultralytics import YOLO
 DEFAULT_MODEL = "yolov8n.pt"
 PERSON_CLASS_NAME = "person"
 
+# Daftar objek genggam (handheld) yang mudah dipegang dan ditunjukkan ke kamera
+HANDHELD_CLASSES = {
+    "bottle",      # Botol
+    "cup",         # Cangkir/Gelas
+    "fork",        # Garpu
+    "knife",       # Pisau
+    "spoon",       # Sendok
+    "bowl",        # Mangkuk
+    "banana",      # Pisang
+    "apple",       # Apel
+    "orange",      # Jeruk
+    "mouse",       # Mouse
+    "remote",      # Remote
+    "keyboard",    # Keyboard
+    "cell phone",  # Handphone
+    "book",        # Buku
+    "clock",       # Jam
+    "scissors",    # Gunting
+    "teddy bear",  # Boneka
+    "toothbrush"   # Sikat gigi
+}
+
 
 def normalize_class_name(name):
     return str(name).strip().lower().replace("_", " ")
@@ -31,7 +53,6 @@ def parse_source(source):
 
 
 def parse_target_classes(raw_classes, names, include_person):
-    class_ids = set(names.keys())
     lookup = {normalize_class_name(label): class_id for class_id, label in names.items()}
 
     if raw_classes:
@@ -55,6 +76,13 @@ def parse_target_classes(raw_classes, names, include_person):
                     f"Kelas '{token}' tidak ditemukan. Contoh kelas COCO: {sample}"
                 )
             class_ids.add(class_id)
+    else:
+        # Jika argumen classes kosong, secara default gunakan objek genggam (handheld)
+        class_ids = set()
+        for label in HANDHELD_CLASSES:
+            class_id = lookup.get(label)
+            if class_id is not None:
+                class_ids.add(class_id)
 
     if not include_person:
         person_id = lookup.get(PERSON_CLASS_NAME)
@@ -211,7 +239,7 @@ def build_parser():
     parser.add_argument(
         "--classes",
         default="",
-        help="Kelas target dipisah koma, contoh: car,motorcycle,bottle. Kosong berarti semua objek selain person.",
+        help="Kelas target dipisah koma, contoh: car,motorcycle,bottle. Kosong berarti objek genggam (handheld) yang mudah dipegang.",
     )
     parser.add_argument("--conf", type=float, default=0.45, help="Confidence minimum.")
     parser.add_argument("--iou", type=float, default=0.5, help="IoU threshold NMS.")
